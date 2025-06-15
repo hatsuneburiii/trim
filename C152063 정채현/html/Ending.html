@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ending</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="wrap" class="Ending">
+        <div id="fadeOverlayW" class="fade-wh active"></div>
+        <header>
+            <h1>드디어...!</h1>
+        </header>
+        <div id="container">
+            <div id="content">
+                
+                <div id="game-area" class="final">
+                <div class="build"></div>
+                <div class="cloud1"></div>
+                <div class="cloud2"></div>
+                <div class="cong1"></div>
+                <div class="cong2"></div>
+                <div class="cong3"></div>
+                </div>
+
+                <div id="dialogueBox" class="dialogue">
+                    <div class="name">플레이어</div>
+                    <div class="text" id="dialogueText">...</div>
+                    <button id="nextBtn">▼</button>
+                    <button id="proceedBtn" style="display: none;">BABO</button>
+                
+                
+
+            </div>
+        </div>
+    </div>
+<script>
+  window.addEventListener('load', () => {
+  const fadeOverlay = document.getElementById('fadeOverlay');
+  
+  fadeOverlayW.classList.remove('active');
+  fadeOverlayW.classList.add('hidden');
+  setTimeout(() => {
+    fadeOverlayW.style.display = 'none';
+  }, 1000);
+});
+
+const dialogues = [
+  { name: "외계인", text: "힘들었어..." },
+  { name: "외계인", text: "그렇지만 이 정도면 이사하긴 충분하겠군" },
+  { name: "외계인", text: "다시 우리 행성으로 돌아가서 동족을 불러올때까지 얼마나 걸리더라?" },
+  { name: "외계인", text: "갔다오면 '지구'는 완전히 멸망해있을거야!" },
+  { name: "외계인", text: "See you!!!><" }
+];
+
+let currentDialogue = 0;
+let isTyping = false;
+let typingTimer;
+let fullText = "";
+let charIndex = 0;
+
+const nameBox = document.querySelector('.name');
+const textBox = document.querySelector('#dialogueText');
+const nextBtn = document.querySelector('#nextBtn');
+const dialogueBox = document.querySelector('#dialogueBox');
+const fadeOverlay = document.getElementById('fadeOverlay');
+const proceedBtn = document.getElementById('proceedBtn');
+
+//======== 기능 ========
+
+function showDialogue() {
+  const dialogue = dialogues[currentDialogue];
+  fullText = dialogue.text;
+  charIndex = 0;
+  textBox.textContent = "";
+  isTyping = true;
+
+  // 이름 처리
+  if (dialogue.name === "") {
+    nameBox.style.display = "none";
+  } else {
+    nameBox.style.display = "block";
+    nameBox.textContent = dialogue.name;
+  }
+  // 마지막 대사
+  if (currentDialogue === dialogues.length - 1) {
+  isTyping = false;
+  textBox.classList.add("impact");
+  textBox.textContent = fullText;
+
+  // 버튼 0.5초 뒤에 보여주기
+  setTimeout(() => {
+    proceedBtn.style.display = 'block';
+  }, 1000); // 500ms = 0.5초
+
+  return;
+} else {
+    textBox.classList.remove("impact");
+    proceedBtn.style.display = 'none';
+  }
+  // 타이핑 시작
+  typingTimer = setInterval(() => {
+    if (charIndex < fullText.length) {
+      textBox.textContent += fullText.charAt(charIndex);
+      charIndex++;
+    } else {
+      clearInterval(typingTimer);
+      isTyping = false;
+    }
+  }, 100); // 속도 조절 가능 (작을수록 빠름)
+}
+
+function skipOrAdvance() {
+  if (currentDialogue === dialogues.length - 1) {
+    return; // 마지막 대사는 키 입력 무시
+  }
+
+  if (isTyping) {
+    clearInterval(typingTimer);
+    textBox.textContent = fullText;
+    isTyping = false;
+  } else {
+    currentDialogue++;
+    showDialogue();
+  }
+}
+
+proceedBtn.addEventListener('click', () => {
+  window.open('https://www.instagram.com/babo_nutmeg?igsh=MzA5ZzU4cGxhM29k&utm_source=qr', '_blank');
+});
+
+
+
+proceedBtn.style.display = 'none'; // 일반 대사에서는 숨김
+
+// 키 입력 처리: 마지막 대사에서는 무시
+document.addEventListener('keydown', (e) => {
+  if ((e.code === 'Enter' || e.code === 'Space') && currentDialogue < dialogues.length - 1) {
+    e.preventDefault();
+    skipOrAdvance();
+  }
+});
+
+window.onload = showDialogue;
+
+
+
+</script>
+
+</body>
+</html>

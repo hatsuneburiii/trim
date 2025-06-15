@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>intro</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="wrap" class="introwrap">
+        <header>
+            <h1>어느 날 밤...</h1>
+        </header>
+        <div id="container">
+            <div id="content">
+                
+                <div id="game-area" class="bgintroyes">
+                  <div class="bgintrono"></div>
+                  <div class="alien"></div>
+                </div>
+                
+                <div id="dialogueBox" class="dialogue">
+                    <div class="name">플레이어</div>
+                    <div class="text" id="dialogueText">...</div>
+                    <button id="nextBtn">▼</button>
+                    <button id="proceedBtn" style="display: none;">invade</button>
+                </div>
+                
+
+            </div>
+        </div>
+    </div>
+    <div id="fadeOverlay"></div>
+
+
+<script>
+  // ======== 선언 ========
+const dialogues = [
+  { name: "", text: "모두가 잠든 밤..." },
+  { name: "", text: "그들이 찾아온다..." },
+  { name: "???", text: "괜찮은 행성이군 후후..." },
+  { name: "???", text: "하지만 우리 종족이 살기엔 너무 촉촉한걸!" },
+  { name: "외계인!", text: "내가 바꿔줘야겠어" },
+  { name: "외계인", text: "..." },
+  { name: "외계인", text: "그런데 여기는 왜 이렇게 밤에도 보는 눈이 많은거야!" },
+  { name: "외계인", text: "하지만 이 몸은 '은닉'에 강하지" },
+  { name: "외계인", text: "원주민들 몰래 이 행성을..." },
+  { name: "외계인", text: "우리에게 맞는 환경으로 바꿔버려야겠어!!" }
+];
+
+let currentDialogue = 0;
+let isTyping = false;
+let typingTimer;
+let fullText = "";
+let charIndex = 0;
+
+const nameBox = document.querySelector('.name');
+const textBox = document.querySelector('#dialogueText');
+const nextBtn = document.querySelector('#nextBtn');
+const dialogueBox = document.querySelector('#dialogueBox');
+const fadeOverlay = document.getElementById('fadeOverlay');
+const proceedBtn = document.getElementById('proceedBtn');
+
+//======== 기능 ========
+
+function showDialogue() {
+  const dialogue = dialogues[currentDialogue];
+  fullText = dialogue.text;
+  charIndex = 0;
+  textBox.textContent = "";
+  isTyping = true;
+
+  // 외계인 등장 + 배경 전환
+  if (currentDialogue === 2) {
+    const alien = document.querySelector('.alien');
+    const bgOverlay = document.querySelector('.bgintrono');
+
+    // 페이드아웃 효과
+    bgOverlay.style.opacity = '0';
+
+    // 외계인 등장
+    setTimeout(() => {
+      alien.classList.add('active');
+    }, 500);
+  }
+  
+  // 이름 처리
+  if (dialogue.name === "") {
+    nameBox.style.display = "none";
+  } else {
+    nameBox.style.display = "block";
+    nameBox.textContent = dialogue.name;
+  }
+  // 마지막 대사
+  if (currentDialogue === dialogues.length - 1) {
+  isTyping = false;
+  textBox.classList.add("impact");
+  textBox.textContent = fullText;
+
+  // 버튼 0.5초 뒤에 보여주기
+  setTimeout(() => {
+    proceedBtn.style.display = 'block';
+  }, 1000); // 500ms = 0.5초
+
+  return;
+} else {
+    textBox.classList.remove("impact");
+    proceedBtn.style.display = 'none';
+  }
+  // 타이핑 시작
+  typingTimer = setInterval(() => {
+    if (charIndex < fullText.length) {
+      textBox.textContent += fullText.charAt(charIndex);
+      charIndex++;
+    } else {
+      clearInterval(typingTimer);
+      isTyping = false;
+    }
+  }, 100); // 속도 조절 가능 (작을수록 빠름)
+}
+
+function skipOrAdvance() {
+  if (currentDialogue === dialogues.length - 1) {
+    return; // 마지막 대사는 키 입력 무시
+  }
+
+  if (isTyping) {
+    clearInterval(typingTimer);
+    textBox.textContent = fullText;
+    isTyping = false;
+  } else {
+    currentDialogue++;
+    showDialogue();
+  }
+}
+
+proceedBtn.addEventListener('click', () => {
+  fadeOverlay.classList.add('active');
+  setTimeout(() => {
+    window.location.href = '2home.html';
+  }, 1000);
+});
+
+proceedBtn.style.display = 'none'; // 일반 대사에서는 숨김
+
+// 키 입력 처리: 마지막 대사에서는 무시
+document.addEventListener('keydown', (e) => {
+  if ((e.code === 'Enter' || e.code === 'Space') && currentDialogue < dialogues.length - 1) {
+    e.preventDefault();
+    skipOrAdvance();
+  }
+});
+
+window.onload = showDialogue;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>농장 게임</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="wrap" class="stage3wrap">
+        <header>
+            <h1>들키지 않게 이동하자!</h1>
+        </header>
+        <div id="container">
+            <div id="content">
+
+              <div id="game-area" class="bgg3">
+                <div class="obstacle ob1 fence"></div>
+                <div class="obstacle ob2 fence"></div>
+                <div class="obstacle ob3 fence"></div>
+                <div class="obstacle ob4 fence"></div>
+                <div class="watch"></div>
+                <div class="player"></div>
+                <div class="hearts">
+                  <img src="../img/heart.png" class="heart">
+                  <img src="../img/heart.png" class="heart">
+                  <img src="../img/heart.png" class="heart">
+                </div>
+              </div>
+
+
+              <div class="modal">
+                <div class="modal-content">
+                  <h2>게임 오버</h2>
+                  <p>어떻게 할까?</p>
+                  <div class="button-row">
+                    <button class="restartBtn">다시 하기
+                      <span class="tooltip-text">▶ 맨 처음으로</span>
+                    </button>
+                    <button class="homeBtn">잠시 쉬기
+                      <span class="tooltip-text">▶ 홈으로</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+        </div>
+    </div>
+
+<script>
+// 모달 
+const gameOverModal = document.querySelector('.modal');
+const restartBtn = document.querySelector('.restartBtn');
+const homeBtn = document.querySelector('.homeBtn');
+
+//홈으로
+homeBtn.addEventListener('click', () => {
+  window.location.href = '2home.html';
+});
+
+// 플레이어와 감시 빛
+const player = document.querySelector('.player');
+const watch = document.querySelector('.watch');
+const obstacles = document.querySelectorAll('.obstacle');
+
+// 플레이어 위치 좌표 (초기값)
+let playerX = 30;
+let playerY = 500;
+
+// 감시 빛 좌우 이동을 위한 변수
+let watchX = 320;          // 시작 위치
+let watchSpeed = 2.0;      // 이동 속도 (px/frame)
+let direction = -1;        // -1이면 왼쪽, 1이면 오른쪽
+
+
+
+// 이동 속도 (한 번 누를 때 움직이는 픽셀 수)
+const playerSpeed = 3;
+
+// 키 입력 상태 저장 객체
+const keys = {};
+
+// 키가 눌렸을 때 true로 저장
+window.addEventListener('keydown', e => {
+  keys[e.key.toLowerCase()] = true;
+});
+
+// 키를 뗐을 때 false로 저장
+window.addEventListener('keyup', e => {
+  keys[e.key.toLowerCase()] = false;
+});
+
+
+// 충돌 체크 함수 (간단한 사각형 충돌)
+function isColliding() {
+  const playerRect = player.getBoundingClientRect();
+  const watchRect = watch.getBoundingClientRect();
+
+  return !(
+    playerRect.right < watchRect.left ||
+    playerRect.left > watchRect.right ||
+    playerRect.bottom < watchRect.top ||
+    playerRect.top > watchRect.bottom
+  );
+}
+
+
+// 플레이어 위치 업데이트
+function updatePlayer() {
+  // 왼쪽 화살표 키가 눌렸을 때
+  if (keys['arrowleft']) playerX -= playerSpeed;
+
+  // 오른쪽 화살표 키가 눌렸을 때
+  if (keys['arrowright']) playerX += playerSpeed;
+
+  // 화면 경계 안으로 제한
+  if (playerX < 0) playerX = 0;
+  if (playerX > 750) playerX = 750; // (800px - 플레이어 width 50px)
+
+  // 실제 HTML 요소에 위치 반영
+  player.style.left = playerX + 'px';
+}
+
+//감시영역 이동
+function updateWatch() {
+  // 좌우 경계 체크
+  if (watchX <= 0 || watchX + 160 >= 800) {
+    direction *= -1;
+  }
+// 위치 업데이트
+  watchX += watchSpeed * direction;
+  watch.style.left = watchX + 'px';
+}
+
+//플레이어가 기둥 뒤에 숨어 있을 때
+function isPlayerBehindObstacle() {
+  const playerRect = player.getBoundingClientRect();
+
+  for (let ob of obstacles) {
+    const obRect = ob.getBoundingClientRect();
+
+    // 플레이어가 기둥과 겹치는지 확인
+    const isOverlapping = !(
+      playerRect.right < obRect.left ||
+      playerRect.left > obRect.right ||
+      playerRect.bottom < obRect.top ||
+      playerRect.top > obRect.bottom
+    );
+
+    if (isOverlapping) {
+      return true; // 플레이어가 기둥 뒤에 있다는 뜻
+    }
+  }
+  return false;
+}
+
+
+// 게임 시작
+let isGameOver = false;
+let isGameClear = false;
+
+function gameLoop() {
+  if (!isGameOver && !isGameClear) {
+    updatePlayer();
+    updateWatch();
+
+    if (isColliding(player, watch) && !isPlayerBehindObstacle()) {
+      isGameOver = true;
+      loseHeart();
+    } 
+
+    // 오른쪽 끝 도달 체크
+    if (playerX >= 750) { 
+      sessionStorage.setItem('stage3Cleared', 'true');
+      window.location.href = "5clear3.html";
+      isGameClear = true;
+      return;
+    }
+  }
+  requestAnimationFrame(gameLoop);
+}
+
+// ========== 하트
+// 전역에서 접근 가능하게 이동
+function updateHeartsUI() {
+  const hearts = parseInt(sessionStorage.getItem('hearts') || '3', 10);
+  const heartEls = document.querySelectorAll('.heart');
+
+  heartEls.forEach((el, index) => {
+    el.style.opacity = index < hearts ? '1' : '0.3';
+  });
+}
+
+// 충돌 발생 시 호출
+function onPlayerCaught() {
+  loseHeart();
+  showGameOver();
+}
+
+function loseHeart() {
+  let hearts = parseInt(sessionStorage.getItem('hearts') || '3', 10);
+
+  hearts -= 1;
+  sessionStorage.setItem('hearts', hearts.toString());
+  updateHeartsUI();
+
+  if (hearts > 0) {
+    // 하트가 남아있으면 모달 띄우기
+    showGameOver();
+  } else {
+    // 하트 0이면 바로 배드 엔딩으로
+    window.location.href = '6badEnding.html';
+  }
+}
+
+
+//초기화
+document.addEventListener('DOMContentLoaded', () => {
+  let hearts = sessionStorage.getItem('hearts');
+  if (hearts === null) {
+    hearts = '3';
+    sessionStorage.setItem('hearts', hearts);
+  }
+  updateHeartsUI();
+
+  gameLoop();
+});
+
+
+
+
+// ========== 게임오버 처리
+function showGameOver() {
+  gameOverModal.classList.add('active');
+}
+
+// 리플레이 버튼 클릭 시
+restartBtn.addEventListener('click', () => {
+  gameOverModal.classList.remove('active');
+  resetGame();
+});
+
+// resetGame() 함수는 현재 하트 상태 유지하면서 플레이어, 감시자 위치만 초기화함
+function resetGame() {
+  playerX = 30;
+  playerY = 500;
+  player.style.left = playerX + 'px';
+
+  watchX = 320;
+  direction = -1;
+  watch.style.left = watchX + 'px';
+
+  // 키 상태 초기화
+  for (let key in keys) {
+    keys[key] = false;
+  }
+
+  isGameOver = false;
+}
+
+</script>
+
+</body>
+</html>

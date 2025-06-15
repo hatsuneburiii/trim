@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바다 클리어</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="wrap" class="stage2wrap">
+
+        <div id="fadeOverlay" class="fade-overlay active"></div>
+        <header>
+            <h1>가자~! 다음 단계로</h1>
+        </header>
+        <div id="container">
+            <div id="content">
+                
+                <div id="game-area" class="bgclear"></div>
+
+                <div id="dialogueBox" class="dialogue">
+                    <div class="name">플레이어</div>
+                    <div class="text" id="dialogueText">...</div>
+                    <button id="nextBtn">▼</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<script>
+  
+window.addEventListener('load', () => {
+  const fadeOverlay = document.getElementById('fadeOverlay');
+  const menu = document.querySelector('.game-menu');
+  const buttons = document.querySelectorAll('.game-menu button');
+  console.log(buttons);
+  // 페이드인
+  fadeOverlay.classList.remove('active');
+  fadeOverlay.classList.add('hidden');
+  setTimeout(() => {
+    fadeOverlay.style.display = 'none';
+  }, 1000);
+})
+
+function fadeOutAndGoHome() {
+  fadeOverlay.style.display = 'block';   // 다시 화면 앞으로
+  setTimeout(() => {
+    fadeOverlay.classList.add('active'); // 검정 화면 덮기 (불투명)
+  }, 10); // 약간 지연 필요
+
+  setTimeout(() => {
+    window.location.href = '2home.html'; // 페이지 이동
+  }, 1010); // css transition 시간 + 10ms
+}
+
+
+const dialogues = [
+  { name: "외계인", text: "으하하!!!" },
+  { name: "외계인", text: "쓰레기를 끌어모아 전부 바다에 버렸다" },
+  { name: "외계인", text: "이제 이곳의 바다는 죽어가겠군" },
+  { name: "외계인", text: "그럼 다음 계획으로 넘어가볼까~" }
+];
+
+let currentDialogue = 0;
+let isTyping = false;
+let typingTimer;
+let fullText = "";
+let charIndex = 0;
+
+const nameBox = document.querySelector('.name');
+const textBox = document.querySelector('#dialogueText');
+const nextBtn = document.querySelector('#nextBtn');
+const dialogueBox = document.querySelector('#dialogueBox');
+const fadeOverlay = document.getElementById('fadeOverlay');
+const proceedBtn = document.getElementById('proceedBtn');
+
+//======== 기능 ========
+
+function showDialogue() {
+  const dialogue = dialogues[currentDialogue];
+  fullText = dialogue.text;
+  charIndex = 0;
+  textBox.textContent = "";
+  isTyping = true;
+
+  // 이름 처리
+  if (dialogue.name === "") {
+    nameBox.style.display = "none";
+  } else {
+    nameBox.style.display = "block";
+    nameBox.textContent = dialogue.name;
+  }
+
+  // 기본 텍스트 스타일 초기화
+  textBox.classList.remove("impact");
+  
+  if (currentDialogue === dialogues.length - 1) {
+    // 마지막 대사일 경우: 타이핑 효과 없이 바로 전체 텍스트 출력 + impact 적용
+    isTyping = false;
+    textBox.textContent = fullText;
+    textBox.classList.add("impact");
+  } else {
+    // 마지막 대사가 아닐 경우: 타이핑 효과
+    isTyping = true;
+    typingTimer = setInterval(() => {
+      if (charIndex < fullText.length) {
+        textBox.textContent += fullText.charAt(charIndex);
+        charIndex++;
+      } else {
+        clearInterval(typingTimer);
+        isTyping = false;
+      }
+    }, 100);
+  }
+}
+
+function skipOrAdvance() {
+  if (isTyping) {
+    clearInterval(typingTimer);
+    textBox.textContent = fullText;
+    isTyping = false;
+    return;
+  }
+
+if (currentDialogue === dialogues.length - 1) {
+    fadeOutAndGoHome()
+    return;
+  }
+
+  currentDialogue++;
+  showDialogue();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' || e.code === 'Enter') {
+    e.preventDefault();
+    skipOrAdvance();
+  }
+});
+
+window.onload = () => {
+  // 스테이지 클리어 여부 체크
+  const allCleared = ['stage1Cleared', 'stage2Cleared', 'stage3Cleared', 'stage4Cleared', 'stage5Cleared']
+    .every(stage => sessionStorage.getItem(stage) === 'true');
+
+  if (allCleared) {
+    dialogues[dialogues.length - 1].text = "오? 모든 계획을 끝낸 것 같은데?";
+  }
+
+  // 페이드인 해제
+  fadeOverlay.classList.remove('active');
+  fadeOverlay.classList.add('hidden');
+  setTimeout(() => {
+    fadeOverlay.style.display = 'none';
+  }, 1000);
+
+  showDialogue();
+};
+
+</script>
+</body>
+</html>

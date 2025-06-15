@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홈</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="wrap" class="homewrap">
+        <div id="fadeOverlay" class="fade-overlay active"></div>
+        <header>
+            <h1>어디부터 손을 볼까...</h1>
+        </header>
+        <div id="container">
+            <div id="content">
+                <div id="game-area" class="bghome">
+                  <div class="logo"></div>
+                <div class="game-menu">
+                    <button id="stage1Btn" data-link="3beforegame1.html" data-stage="1">숲</button>
+                    <button id="stage2Btn" data-link="3beforegame2.html" data-stage="2">바다</button>
+                    <button id="stage3Btn" data-link="3beforegame3.html" data-stage="3">농장</button>
+                    <button id="stage4Btn" data-link="3beforegame4.html" data-stage="4">에어컨</button>
+                    <button id="stage5Btn" data-link="3beforegame5.html" data-stage="5">동물</button>
+                </div>
+                <button id="invadeBtn">침략하러 가자!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+window.addEventListener('load', () => {
+  const fadeOverlay = document.getElementById('fadeOverlay');
+  const menu = document.querySelector('.game-menu');
+  const stageButtons = document.querySelectorAll('.game-menu button:not(#invadeBtn)');
+  const invadeBtn = document.getElementById('invadeBtn');
+  const logo = document.querySelector('.logo');
+
+  // 페이드인
+  fadeOverlay.classList.remove('active');
+  fadeOverlay.classList.add('hidden');
+  setTimeout(() => {
+    fadeOverlay.style.display = 'none';
+  }, 1000);
+
+  //메뉴
+  menu.classList.add('active');
+
+  [...stageButtons].reverse().forEach((btn, i) => {
+    btn.style.animationDelay = `${i * 30}ms`;
+    btn.classList.add('active');
+
+    btn.addEventListener('animationend', () => {
+    btn.classList.add('ready');
+    btn.style.transform = '';
+  }, { once: true });
+  });
+  
+
+// 스테이지 버튼 경고창 처리
+  stageButtons.forEach((btn) => {
+  const stageNum = btn.dataset.stage;
+  if (sessionStorage.getItem(`stage${stageNum}Cleared`) === 'true') {
+    btn.classList.add('cleared');
+  }
+
+  btn.addEventListener('click', () => {
+    if (btn.classList.contains('cleared')) {
+      alert('이미 클리어한 스테이지입니다');
+      return;
+    }
+
+      logo.classList.add('flyOff');
+
+      stageButtons.forEach((b, i) => {
+        setTimeout(() => {
+          b.classList.add('fly-out');
+        }, i * 100);
+      });
+
+    const lastButton = stageButtons[stageButtons.length - 1];
+      lastButton.addEventListener('animationend', () => {
+        const link = btn.getAttribute('data-link');
+        if (link) {
+          window.location.href = link;
+        }
+      }, { once: true });
+    });
+  });
+
+
+// 모든 스테이지 클리어 확인 및 invadeBtn 토글
+  const stagesCleared = ['stage1Cleared', 'stage2Cleared', 'stage3Cleared', 'stage4Cleared', 'stage5Cleared'];
+  const allCleared = stagesCleared.every(stage => sessionStorage.getItem(stage) === 'true');
+
+  if (allCleared) {
+    invadeBtn.style.display = 'block';
+  } else {
+    invadeBtn.style.display = 'none';
+  }
+
+  // 침략 버튼 클릭 이벤트
+  invadeBtn.addEventListener('click', () => {
+    window.location.href = 'Ending.html';
+  });
+});
+
+
+
+</script>
+
+</body>
+</html>

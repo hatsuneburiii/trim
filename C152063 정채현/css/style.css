@@ -1,0 +1,898 @@
+@charset "UTF-8";
+
+/*====== reset ======*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+ul{
+    list-style: none;
+}
+h1{
+    color: #000;
+    text-decoration: none;
+}
+@font-face {
+  font-family: 'Galmuri14';
+  src: url('../font/Galmuri14.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'BILLO';
+  src: url('../font//BILLO.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/*======  common ======*/
+
+#wrap {
+    display: block;
+    width: 100%;
+    height: 100vh;
+}
+.introwrap {
+  background-color: #000;
+}
+.homewrap {
+  background: #000;
+}
+.stage1wrap {
+  background-color: #6d9ed9;
+}
+.stage2wrap {
+  background-color: #79e4ff;
+}
+.stage3wrap {
+  background-color: #f2b65c;
+}
+.stage4wrap {
+  background-color: #c6d4de;
+}
+.stage5wrap {
+  background-color: #414a56;
+}
+.bewrap {
+  background-color: #000;
+}
+.Ending{
+  background-image: url('../img/Ending.png');
+  background-size: contain;
+}
+
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 80px;
+    padding: 0 24px;
+    background: #2effcf;
+    opacity: .8;
+    font-family: 'Galmuri14', sans-serif;
+    text-decoration: none;
+}
+header a {
+    color: rgb(31, 38, 52);
+}header:hover{
+    text-decoration: underline;
+}
+#gnb {
+    display: flex;
+}
+#container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: calc(100% - 80px);
+    font-family: 'Galmuri14', sans-serif;
+}
+.game-menu button,
+.button-row button,
+#nextBtn,
+#invadeBtn,
+#proceedBtn {
+  font-family: 'Galmuri14', sans-serif;
+}
+/* ======== 게임에어리어 ========*/
+
+#game-area {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  background-size: cover;
+  overflow: hidden;
+}
+
+
+.bgintroyes{
+  background-image: url('../img/introduce.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.bgintrono{
+  position: absolute;
+  width: 800px;
+  height: 600px;
+  opacity: 1;
+  transition: opacity 1s ease;
+  background-image: url('../img/intro.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.bghome{
+  background-image: url('../img/homewrap.png');
+}
+.bgg1 {
+  background-image: url('../img/stage1wrap.png');
+}
+.bgg2 {
+  background-image: url('../img/stage2wrap.png');
+}
+.bgg3 {
+  background-image: url('../img/stage3wrap.png');
+}
+.bgg4 {
+  background-image: url('../img/stage4wrap.png');
+}
+.bgg5 {
+  background-image: url('../img/stage5wrap.png');
+}
+.BadEnding {
+  background-image: url('../img/badEnding.png');
+}
+.final {
+  background-image: url('../img/Ending.png');
+}
+.v1 {
+  background-image: url('../img/badEnding.png');
+  z-index: 15;
+}
+.v2 {
+  background-image: url('../img/v2.png');
+}
+.v3 {
+  background-image: url('../img/v3.png');
+}
+.v4 {
+  background-image: url('../img/v4.png');
+}
+.v5 {
+  background-image: url('../img/v5.png');
+}
+
+
+/* ======== 프롤로그 ========*/
+
+.alien {
+  background-image: url(../img/plsh.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  bottom: 50px;
+  right: -150px;
+  width: 150px;
+  height: 300px;
+  transition: all 1s ease-out;
+}
+
+.alien.active {
+  right: 150px;
+}
+
+.dialogue {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  min-height: 110px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid white;
+  border-radius: 10px;
+  color: white;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 10;
+}
+
+.dialogue .name {
+  align-self: flex-start;
+  font-weight: bold;
+  font-size: 18px;
+  color: #00ffff;
+}
+
+.dialogue .text {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+@keyframes boom {
+  0%   { transform: scale(1) translateX(0); }
+  20%  { transform: scale(1.2) translateX(-2px); }
+  40%  { transform: scale(1.2) translateX(2px); }
+  60%  { transform: scale(1.2) translateX(-2px); }
+  80%  { transform: scale(1.2) translateX(2px); }
+  100% { transform: scale(1.2) translateX(0); }
+}
+
+.impact {
+  font-weight: bold;
+  animation: boom 0.5s ease;
+  font-size: 22px; /* 기본보다 큼 */
+}
+
+#nextBtn {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  margin-top: auto;
+}
+#proceedBtn {
+  margin-top: 10px;
+  padding: 8px 16px;
+  font-size: 36px;
+  background: #00ffff;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 11;
+}
+
+/* 페이드 아웃 효과용 오버레이 */
+#fadeOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: black;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+  z-index: 11;
+}
+#fadeOverlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#fadeOverlayW {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: black;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+  z-index: 11;
+}
+#fadeOverlayW.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fade-wh {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgb(255, 255, 255);
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 1s ease;
+  z-index: 12;
+}
+.fade-wh.active {
+  opacity: 1;
+}
+.fade-wh.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/*======== 홈 ========*/
+.fade-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: black;
+  opacity: 1;
+  pointer-events: none; /* 클릭 막기 위해 */
+  transition: opacity 1s ease;
+  z-index: 9999;
+}
+
+.fade-overlay.active {
+  opacity: 1;
+}
+
+.fade-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.logo {
+  position: absolute;
+  top: -200px;
+  width: 800px;
+  height: 300px;
+  background-image: url('../img/logo.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  animation: flyOn 0.5s ease-out forwards;
+}
+.logo.flyOff {
+  animation: flyOff 0.5s ease-out forwards;
+}
+
+/* 커맨드 메뉴 */
+.game-menu {
+  position: absolute;
+  top: 30px;
+  left: -300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: left 0.3s ease-out;
+}
+
+/* 메뉴 등장 후 위치 */
+.game-menu.active {
+  left: 50px;
+}
+
+/* 버튼 스타일 */
+.game-menu button {
+  width: 200px;
+  height: 100px;
+  padding: 30px;
+  font-size: 24px;
+  background-image: url(../img/btn.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  color: black;
+  border: none;
+  cursor: pointer;
+  z-index: 1;
+  transform: translateX(-300px);
+  transition: color 0.2s, 0s;
+}
+
+/* 등장 시 개별 애니메이션 */
+.game-menu button.active {
+  animation: fly-in 0.5s ease-out forwards;
+}
+
+/*버튼 기본 상태 */
+.game-menu button.ready {
+  transform: translateX(0) scale(1);
+  transition: transform 0.2s ease,color 0.2s;
+}
+/* hover 시 강조 */
+.game-menu button.ready:hover {
+  background-image: url(../img/btnHover.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  color: white;
+  transform: translateX(0) scale(1.3);
+  transition: transform 0.2s ease, color 0.2s;
+  z-index: 10;
+}
+
+.game-menu button.cleared {
+  background-image: url('../img/cleared.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+}
+
+#invadeBtn {
+  display: none;
+  position: absolute;
+  right: 100px;
+  bottom: 100px;
+  width: 250px;
+  height: 100px;
+  font-size: 24px;
+  background-color: #f04e23;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#invadeBtn:hover {
+  background-color: #d13b1a;
+}
+
+
+/*애니메이션 */
+@keyframes flyOn {
+  to {
+    top: 0px;
+  }
+}
+@keyframes flyOff {
+  from {
+    top: 0px;
+  }
+  to {
+    top: -200px;
+  }
+}
+
+@keyframes fly-in {
+  0% {
+    transform: translateX(-300px) scale(0.9);
+  }
+  80% {
+    transform: translateX(10px) scale(1.05);
+  }
+  100% {
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* 퇴장 애니메이션 추가 */
+@keyframes fly-out {
+  0% {
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    transform: translateX(-300px) scale(0.9);
+  }
+}
+
+/* 버튼 퇴장 클래스 */
+.game-menu button.fly-out {
+  animation: fly-out 0.4s ease-in forwards;
+}
+
+
+
+/*======== 게임 ========*/
+
+/* 플레이어 */
+.player {
+  position: absolute;
+  width: 50px;
+  height: 100px;
+  transform: translate(-50%);
+  background-image: url('../img/player.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  top: 400px;
+  left: 30px;
+  z-index: 2;
+}
+.hurt{
+  background-image: url('../img/hurt.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: blinkHurt 0.7s ease-in-out;
+}
+
+@keyframes blinkHurt {
+  0%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.player.hurt {
+  animation: blinkHurt 0.7s ease-in-out;
+}
+
+/* 기둥 */
+.obstacle {
+  position: absolute;
+  width: 56px;
+  height: 195px;
+  top: 300px;
+  z-index: 2;
+}
+/* 각각의 위치 지정 (기둥 4개) */
+.ob1 {
+  left: 0px;
+}
+.ob2 {
+  left: 160px;
+}
+.ob3 {
+  left: 464px;
+}
+.ob4 {
+  left: 664px;
+}
+.tree {
+  background-image: url(../img/tree.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.rock {
+  background-image: url(../img/rock.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.fence {
+  background-image: url(../img/fence.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.air {
+  background-image: url(../img/air.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.animal {
+  background-image: url(../img/animal.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+/*스테이지 장애물 변화1*/
+.obstacle.shaking {
+  animation: shake 0.5s infinite;
+}
+.stage5wrap .ob3 {
+  left: 380px; /* 원하는 위치로 수정 */
+}
+
+@keyframes shake {
+  0%   { transform: rotate(0deg); }
+  25%  { transform: rotate(2deg); }
+  50%  { transform: rotate(-2deg); }
+  75%  { transform: rotate(2deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.obstacle.gone {
+  opacity: 0;
+  pointer-events: none;
+  display: none;
+}
+
+
+/* 감시 영역 */
+.watch {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  top: 359px;
+  left: 320px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 0, 0.4);
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100% 85%,
+    0% 85%);
+  z-index: 1;
+}
+
+.stage3wrap .watch {
+  transform: scale(2);
+  transform-origin: bottom center;
+  top: 380px;
+}
+
+/*======== 하트 ======== */
+.hearts {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  top: 25px;
+  left: 35px;
+  z-index: 9;
+}
+
+.heart {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  opacity: 1;
+}
+
+.heart.lost { 
+  opacity: 0.3; 
+}
+
+
+/*======== 게임 오버 창 ========*/
+
+
+.modal {
+  display: none; /* 숨김 상태 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom, rgba(255,0,0) 0%, rgba(0,0,0) 100%);
+  z-index: 10;
+}
+.modal.active {
+  display: flex;
+}
+.modal-content {
+  background: rgb(0, 0, 0);
+  width: 800px;
+  height: 600px;
+  min-width: 800px;
+  min-height: 600px;
+  box-sizing: border-box;
+  padding: 30px;
+
+  text-align: center;
+  color:white;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-row {
+  display: flex;
+  text-align: center;
+  gap: 50px;
+  margin-top: 30px;
+}
+
+.button-row button {
+  position: relative;
+  display: inline-block;
+  width: 100px;
+  margin: 0 2.5%;
+  padding: 15px 0;
+  font-size: 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background-color: #00ffff;
+  color: black;
+  transition: background-color 0.3s ease;
+}
+
+.button-row button .tooltip-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 8px;
+
+  /* 위치 조정 */
+  position: absolute;
+  bottom: -30px;  /* 버튼 바로 아래 */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 14px;
+  z-index: 10;
+  
+  /* 투명도 및 전환 효과 */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* 버튼에 호버 시 툴팁 보이기 */
+.button-row button:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* 버튼 호버 색상 */
+.button-row button:hover {
+  background-color: #ffffff;
+}
+
+
+/* ======== 비건과의 결투 ========*/
+
+/* 비건 */
+.vegan {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background-image: url('../img/vegan.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 100px;
+  z-index: 1;
+}
+.vegan.hit {
+  background-image: url('../img/vegan2.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  animation: blinkHit 0.7s ease-in-out;
+}
+
+@keyframes blinkHit {
+  0%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.vegan .mouth {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: darkred;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.vegan-hp {
+  position: absolute;
+  width: 100px;
+  height: 10px;
+  background: #ccc;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.hp-fill {
+  width: 100%;
+  height: 100%;
+  background: red;
+}
+/* 공격 게이지 */
+.attack-hp {
+  position: absolute;
+  top: 25px;
+  left: 210px;
+  width: 160px;
+  height: 40px;
+  background: #ddd;
+}
+.gauge-fill {
+  width: 100%;
+  height: 100%;
+  background: orange;
+  transition: width 7s linear;
+}
+.gauge-fill.attack {
+  width: 0;
+  transition: width 0.7s ease;
+}
+/* 빔 */
+.beam {
+  position: absolute;
+  display: none;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 0, 0, 0.5);
+  bottom: 100px;
+  left: 50%;
+  display: none;
+  border-radius: 20px;
+  z-index: 5;
+  transition: width 0.3s ease, left 0.3s ease, opacity 0.7s ease;
+}
+
+.beam.split-left {
+  transform: translateX(-2000px);
+  opacity: 0;
+}
+
+.beam.split-right {
+  transform: translateX(calc(100vw + 2000px));
+  opacity: 0;
+}
+
+
+/*Ending*/
+.build {
+  position: absolute;
+  right: -30px;
+  top: 100px;
+  width: 380px;
+  height: 470px;
+  background-image: url('../img/build.png');
+  background-size: cover;
+  z-index: 1;
+}
+.cloud1 {
+  position: absolute;
+  top: 250px;
+  width: 1000px;
+  height: 300px;
+  background-image: url('../img/cloud.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: floatCloud 20s linear infinite;
+}
+.cloud2 {
+  position: absolute;
+  right: -650px;
+  top: 30px;
+  width: 600px;
+  height: 100px;
+  background-image: url('../img/cloud2.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: floatCloud 20s linear 10s infinite;
+}
+
+@keyframes floatCloud {
+  0% {
+    right: -650px;
+  }
+  100% {
+    right: 800px;
+  }
+}
+.cong1 {
+  position: absolute;
+  width: 500px;
+  height: 200px;
+  top: 80px;
+  left: 30px;
+  background-image: url('../img/cong.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 3;
+  animation: blink 2s step-start 1s infinite;
+}
+.cong2 {
+  position: absolute;
+  width: 500px;
+  height: 180px;
+  top: 240px;
+  left:300px;
+  background-image: url('../img/cong.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 3;
+  animation: blink 2s step-start 1.5s infinite;
+}
+.cong3 {
+  position: absolute;
+  width: 500px;
+  height: 200px;
+  top: 360px;
+  left: 100px;
+  background-image: url('../img/cong.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 3;
+  opacity: 1;
+  animation: blink 2s step-start infinite;
+}
+
+@keyframes blink {
+  0%, 49% {
+    opacity: 0;
+  }
+  50%, 100% {
+    opacity: 1;
+  }
+}

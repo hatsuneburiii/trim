@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>에어컨</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="wrap" class="stage4wrap">
+        <div id="fadeOverlay" class="fade-overlay active"></div>
+        <div id="container">
+            <div id="content">
+                
+                <div id="game-area" class="bbg4"></div>
+
+                <div id="dialogueBox" class="dialogue">
+                    <div class="name">플레이어</div>
+                    <div class="text" id="dialogueText">...</div>
+                    <button id="nextBtn">▼</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<script>
+  
+window.addEventListener('load', () => {
+  const fadeOverlay = document.getElementById('fadeOverlay');
+  const menu = document.querySelector('.game-menu');
+  const buttons = document.querySelectorAll('.game-menu button');
+  console.log(buttons);
+  // 페이드인
+  fadeOverlay.classList.remove('active');
+  fadeOverlay.classList.add('hidden');
+  setTimeout(() => {
+    fadeOverlay.style.display = 'none';
+  }, 1000);
+})
+
+function fadeOutAndGoHome() {
+  fadeOverlay.style.display = 'block';   // 다시 화면 앞으로
+  setTimeout(() => {
+    fadeOverlay.classList.add('active'); // 검정 화면 덮기 (불투명)
+  }, 10); // 약간 지연 필요
+
+  setTimeout(() => {
+    window.location.href = '4game4.html'; // 페이지 이동
+  }, 1010); // css transition 시간 + 10ms
+}
+
+const dialogues = [
+  { name: "외계인", text: "인간들을 확실히 내쫓고 싶은데" },
+  { name: "외계인", text: "인간들은 추운 걸 싫어하잖아!" },
+  { name: "외계인", text: "18도로 에어컨 틀어야겠다!" }
+];
+
+let currentDialogue = 0;
+let isTyping = false;
+let typingTimer;
+let fullText = "";
+let charIndex = 0;
+
+const nameBox = document.querySelector('.name');
+const textBox = document.querySelector('#dialogueText');
+const nextBtn = document.querySelector('#nextBtn');
+const dialogueBox = document.querySelector('#dialogueBox');
+const fadeOverlay = document.getElementById('fadeOverlay');
+const proceedBtn = document.getElementById('proceedBtn');
+
+//======== 기능 ========
+
+function showDialogue() {
+  const dialogue = dialogues[currentDialogue];
+  fullText = dialogue.text;
+  charIndex = 0;
+  textBox.textContent = "";
+  isTyping = true;
+
+  // 이름 처리
+  if (dialogue.name === "") {
+    nameBox.style.display = "none";
+  } else {
+    nameBox.style.display = "block";
+    nameBox.textContent = dialogue.name;
+  }
+
+  // 기본 텍스트 스타일 초기화
+  textBox.classList.remove("impact");
+  
+  if (currentDialogue === dialogues.length - 1) {
+    // 마지막 대사일 경우: 타이핑 효과 없이 바로 전체 텍스트 출력 + impact 적용
+    isTyping = false;
+    textBox.textContent = fullText;
+    textBox.classList.add("impact");
+  } else {
+    // 마지막 대사가 아닐 경우: 타이핑 효과
+    isTyping = true;
+    typingTimer = setInterval(() => {
+      if (charIndex < fullText.length) {
+        textBox.textContent += fullText.charAt(charIndex);
+        charIndex++;
+      } else {
+        clearInterval(typingTimer);
+        isTyping = false;
+      }
+    }, 100);
+  }
+}
+
+function skipOrAdvance() {
+  if (isTyping) {
+    clearInterval(typingTimer);
+    textBox.textContent = fullText;
+    isTyping = false;
+    return;
+  }
+
+if (currentDialogue === dialogues.length - 1) {
+    fadeOutAndGoHome()
+    return;
+  }
+
+  currentDialogue++;
+  showDialogue();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' || e.code === 'Enter') {
+    e.preventDefault();
+    skipOrAdvance();
+  }
+});
+
+window.onload = () => {
+  // 페이드 해제
+  const fadeOverlay = document.getElementById('fadeOverlay');
+  fadeOverlay.classList.remove('active');
+  fadeOverlay.classList.add('hidden');
+  setTimeout(() => {
+    fadeOverlay.style.display = 'none';
+  }, 1000);
+
+  showDialogue();
+};
+
+</script>
+</body>
+</html>
